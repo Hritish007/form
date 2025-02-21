@@ -3,60 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Company Contact Form</title>
+    <title>Submission Form</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .form-container {
-            max-width: 600px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            margin: 50px auto;
-        }
-    </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="form-container">
+    <div class="form-container mt-5 p-4 bg-white shadow rounded" style="max-width: 500px; margin: auto;">
         <h2 class="text-center mb-4">Contact Us</h2>
-        <form id="contactForm" action="submit_form.php" method="post">
-            <!-- Full Name -->
-            <div class="mb-3">
+        <form action="submit.html" method="get" id="contactForm">
+    
+             <!-- Full Name -->
+             <div class="mb-3">
                 <label for="name" class="form-label">Full Name</label>
                 <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" required>
             </div>
 
+         <div>
+            <label>Gender:</label>
+             <input type="radio" id="male" name="gender" value="male">
+             <label for="male">Male</label>
+             <input type="radio" id="male" name="gender" value="female">
+             <label for="female">Female</label>
+             <input type="radio" id="other" name="gender" value="other">
+             <label for="male">Other</label><br><br>
+         </div>
+
             <!-- Address -->
             <div class="mb-3">
-                <label for="email" class="form-label">Address</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Address" required>
+                <label for="Address" class="form-label">Address</label>
+                <input type="Address" class="form-control" id="Address" name="Address" placeholder="Address"required>
             </div>
 
             <!-- Email -->
             <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="example@gmail.com" required>
-            </div>
+</div>
         
+             <!-- Password Field -->
+<div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <div class="input-group">
+        <input type="password" class="form-control" id="password" name="password" placeholder="Enter strong password" required>
+        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">👁</button>
+</div>
+
             <!-- Phone -->
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone Number</label>
-                <input type="tel" placeholder="Enter 10 digits" maxlength="10" inputmode="numeric" />
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter 10 digits" maxlength="10" required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
             </div>
             
             <!-- Graduation -->
-            <label for="dob">Graduation date:</label>
-            <input type="date" id="dob" name="dob" required><br><br>
+           <label for="graduation_date">Graduation Date:</label>
+<input type="date" id="graduation_date" name="graduation_date" required>
+<br><br>
     
             <!-- Select Service -->
             <div class="mb-3">
-                <label for="service" class="form-label">Select Service</label>
-                <select class="form-select" id="service" name="service" required>
+                <select class="form-select" id="service" name="service" required onchange="this.value==='other' ? otherService.style.display='block' : otherService.style.display='none'">
+
                     <option value="" disabled selected>Choose a Service</option>
                     <option value="web_development">Web Development</option>
                     <option value="app_development">App Development</option>
@@ -65,19 +72,24 @@
                     <option value="seo_marketing">Digital Marketing</option>
                     <option value="other">Other</option>
                 </select>
+                <input type="text" class="form-control mt-2" id="otherService" name="otherService" placeholder="Enter your service" style="display: none;">
+
             </div>
 
              <!-- Upload -->
              <label for="resume" class="tooltip">Upload Resume:
                 <span class="tooltiptext">Accepted file types: .pdf, .docx</span>
             </label>
-            <input type="file" id="resume" name="resume" accept=".pdf,.docx" required><br>
+            <input type="file" id="resume" name="resume" accept=".pdf,.docx" required><br><br>
             
-            <!-- Budget Range -->
+            <!-- Budget Range -->;
             <div class="mb-3">
                 <label for="budget" class="form-label">Budget Range ($)</label>
-                <input type="range" class="form-range" id="budget" name="budget" min="1000" max="50000" step="500" oninput="updateBudgetValue(this.value)">
+                <input type="range" class="form-range" id="budget" name="budget" min="1000" max="50000" step="500" value="25000" oninput="updateBudgetValue(this.value)">
                 <p>Estimated Budget: <span id="budgetValue">$25000</span></p>
+                
+                <!-- Reset Button -->
+                <input type="reset" value="Reset" onclick="resetBudget()">
             </div>
 
             <!-- Message -->
@@ -86,35 +98,43 @@
                 <textarea class="form-control" id="message" name="message" rows="4" placeholder="Describe your project..." required></textarea>
             </div>
 
-            <!-- Agreement Checkbox -->
+            <!-- Terms Checkbox -->
             <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="terms" required>
+                <input type="checkbox" class="form-check-input" id="terms" onchange="toggleSubmitButton()">
                 <label class="form-check-label" for="terms">I agree to the <a href="#">terms and conditions</a></label>
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary w-100"> Submit</button>
-
-            
+            <!-- Submit Button (Initially Disabled) -->
+            <button type="submit" id="submitBtn" class="btn btn-primary w-100" disabled>Submit</button>
 
         </form>
     </div>
 </div>
 
 <script>
-    // Update budget range text dynamically
-    function updateBudgetValue(value) {
+    function togglePassword() {
+        let passwordField = document.getElementById("password");
+        passwordField.type = passwordField.type === "password" ? "text" : "password";
+    }
+    document.getElementById("contactForm").addEventListener("submit", function(event) {
+        let password = document.getElementById("password").value;
+
+    });
+  // Function to update the budget value display
+  function updateBudgetValue(value) {
         document.getElementById("budgetValue").textContent = "$" + value;
     }
 
-    // Form validation before submission
-    document.getElementById("contactForm").addEventListener("submit", function(event) {
-        let termsChecked = document.getElementById("terms").checked;
-        if (!termsChecked) {
-            alert("Please agree to the terms and conditions before submitting.");
-            event.preventDefault();
-        }
-    });
+    // Function to reset the budget value when reset button is clicked
+    function resetBudget() {
+        document.getElementById("budget").value = 25000;  // Reset slider to 25000
+        document.getElementById("budgetValue").textContent = "$25000";  // Reset displayed value
+    }
+    function toggleSubmitButton() {
+        let checkbox = document.getElementById("terms");
+        let submitButton = document.getElementById("submitBtn");
+        submitButton.disabled = !checkbox.checked; // Enable button only if checked
+    }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
